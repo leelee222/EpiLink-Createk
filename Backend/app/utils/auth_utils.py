@@ -9,8 +9,7 @@ from passlib.context import CryptContext
 from app.routers.models import UserInDB
 from app.credentials.config import (
     SECRET_KEY, ALGORITHM, 
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    MONGO_DB_NAME, MONGO_COLLECTION_NAME_USER
+    ACCESS_TOKEN_EXPIRE_MINUTES
 )
 from app.db.user_repo import UserRepository
 import bcrypt
@@ -37,8 +36,8 @@ def verify_password(plain_password, hashed_password):
 def get_password_hash(password):
     return password_context.hash(password)
 
-async def authenticate_user(username: str, password: str):
-    user = await mongodb.get_user(username)
+async def authenticate_user(full_name: str, password: str):
+    user = await mongodb.get_user(full_name)
     if not user or not user.hashed_password:
         return False
     if not verify_password(password, user.hashed_password):
@@ -65,10 +64,10 @@ def decode_access_token(token: str):
 async def get_current_user(token: str = Depends(has_access)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
+        full_name: str = payload.get("sub")
+        if full_name is None:
             raise HTTPException(status_code=401, detail="Token missing 'sub'")
-        return await mongodb.get_user(username=username)
+        return await mongodb.get_user(full_name=full_name)
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 

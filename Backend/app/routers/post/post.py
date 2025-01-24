@@ -14,7 +14,7 @@ post_repo = PostRepository("createk")
 async def create_post(post: PostCreate, current_user: User = Depends(get_current_active_user)):
     post_data = post.dict()
     post_data.update({
-        "author_id": current_user.username,
+        "author_id": current_user.full_name,
         "likes": [],
         "comments": [],
         "created_at": datetime.utcnow(),
@@ -38,7 +38,7 @@ async def create_comment(post_id: str, comment: CommentCreate, current_user: Use
     
     new_comment = {
         "id": str(ObjectId()),
-        "author_id": current_user.username,
+        "author_id": current_user.full_name,
         **comment.dict(),
         "likes": [],
         "replies": [],

@@ -1,5 +1,6 @@
+from datetime import datetime
 from urllib.parse import urlencode
-from configobj import DuplicateError
+from pymongo.errors import DuplicateKeyError
 from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 import httpx
 from fastapi.responses import RedirectResponse
@@ -29,12 +30,9 @@ oauth2_router = APIRouter(
         200: {"description": "Success response"},
         400: {"description": "Bad Request"},
         401: {"description": "Unauthorized access"},
-        409: {"description": "Username already exists"},
+        409: {"description": "full_name already exists"},
     }
 )
-
-def generate_username(email: str, provider) -> str:
-    return email.split("@")[0] + f"_{provider}"
 
 async def exchange_code(provider: str, code: str, client: httpx.AsyncClient) -> dict:
     config = OAUTH_CONFIG[provider]
@@ -107,17 +105,15 @@ async def oauth_callback(
         async with httpx.AsyncClient() as client:
             token_data = await exchange_code(provider, code, client)
             user_data, email = await get_user_info(provider, token_data["access_token"], client)
-            username = generate_username(
-                user_data.get("login") or user_data.get("email"),
-                provider
-            )
+            full_name = user_data.get("name")
             user = await handle_user_creation(
-                username=username,
+                full_name=full_name,
                 email=email or user_data.get("email"),
                 provider=provider,
+                profile_picture=user_data.get("avatar_url") if provider == "github" else user_data.get("picture"),
                 background_tasks=background_tasks
             )
-            jwt_token = create_access_token({"sub": user.username})
+            jwt_token = create_access_token({"sub": user.full_name})
             redirect_url = f"{frontend_url}?token={jwt_token}"
             return RedirectResponse(redirect_url)
 
@@ -130,34 +126,68 @@ async def oauth_callback(
         raise HTTPException(500, detail="Authentication process failed")
 
 async def handle_user_creation(
-    username: str,
+    full_name: str,
     email: str,
     provider: str,
+    profile_picture: str,
     background_tasks: BackgroundTasks
 ) -> UserInDB:
     try:
-        user = await user_repo.get_user(username)
+        existing_user = await user_repo.get_user(full_name)
         
-        if not user:
-            user_data = {
-                "username": username,
-                "email": email,
-                "provider": provider,
-                "disabled": False
-            }
-            user = await user_repo.create_user(user_data)
-            
-            if email:
-                background_tasks.add_task(
-                    send_email,
-                    "Welcome to Createk",
-                    "dossehdosseh14@gmail.com",
-                    email,
-                    GMAIL_EMAIL_PASSWORD,
-                    "app/template/welcome.html",
+        if existing_user:
+            if existing_user.profile_picture != profile_picture:
+                await user_repo.update_user(
+                    full_name,
+                    {"profile_picture": profile_picture}
                 )
-                
-        return user
+                existing_user.profile_picture = profile_picture
+            return existing_user
+
+        if email:
+            email_user = await user_repo.get_user_by_email(email)
+            if email_user and email_user.provider != provider:
+                raise HTTPException(
+                    status_code=409,
+                    detail=f"Email already registered with {email_user.provider}"
+                )
+
+        user_data = {
+            "full_name": full_name,
+            "email": email,
+            "provider": provider,
+            "profile_picture": profile_picture,
+            "disabled": False,
+            "created_at": datetime.utcnow()
+        }
         
-    except DuplicateError:
-        raise HTTPException(409, detail="Username already exists")
+        new_user = await user_repo.create_user(user_data)
+
+        if email:
+            background_tasks.add_task(
+                send_email,
+                "Welcome to Createk",
+                "dossehdosseh14@gmail.com",
+                email,
+                GMAIL_EMAIL_PASSWORD,
+                "app/template/welcome.html",
+                {"full_name": full_name}
+            )
+
+        return new_user
+
+    except DuplicateKeyError as e:
+        logger.warning(f"Duplicate user creation attempt: {full_name}")
+        existing_user = await user_repo.get_user(full_name)
+        return existing_user
+
+    except Exception as e:
+        logger.error(f"User creation failed: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to complete user registration"
+        )
+
+@oauth2_router.get('/{provider}/test')
+async def test_oauth(request: Request, provider: str) -> dict:
+    return {"message": f"Testing {provider} OAuth2"}

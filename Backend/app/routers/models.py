@@ -7,13 +7,15 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    username: Optional[str | None] = None
+    full_name: Optional[str | None] = None
 
 class User(BaseModel):
-    username: str = Field(..., example="johndoe")
+    full_name: str = Field(..., example="johndoe")
     email: Optional[EmailStr] = Field(None, example="johndoe@gmail.com")
     disabled: Optional[bool] = False
     provider: Optional[str] = "createk"
+    profile_picture: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
     following: Optional[list[str]] = []
     followers: Optional[list[str]] = []
     social_links: Optional[dict[str, str]] = {}
@@ -22,7 +24,7 @@ class UserInDB(User):
     hashed_password: Optional[str] = None
 
 class UserCreate(BaseModel):
-    username: str
+    full_name: str
     email: str
     password: str
 
@@ -59,5 +61,5 @@ class Reply(ReplyCreate):
     created_at: datetime
     updated_at: datetime
 
-Post.update_forward_refs()
-Comment.update_forward_refs()
+Post.model_rebuild()
+Comment.model_rebuild()
