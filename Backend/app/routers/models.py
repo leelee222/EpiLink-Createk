@@ -12,7 +12,7 @@ class User(BaseModel):
     username: str = Field(..., example="johndoe")
     email: Optional[EmailStr] = Field(None, example="johndoe@gmail.com")
     disabled: Optional[bool] = False
-    provider: Optional[str] = "area"
+    provider: Optional[str] = "createk"
 
 class UserInDB(User):
     hashed_password: Optional[str] = None
