@@ -1,9 +1,10 @@
 import asyncio
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.db.mongo import MongoConnectionManager
+from app.db.connector import MongoConnectionManager
 from app.routers.auth.oauth2 import oauth2_router
-from app.routers.api.api import api_router
+from app.routers.api.api import user_router
+from app.routers.post.post import post_router
 from app.credentials.config import REDIS_HOST, REDIS_PORT
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
@@ -45,7 +46,8 @@ app.add_middleware(
 )
 
 app.include_router(oauth2_router)
-app.include_router(api_router)
+app.include_router(user_router)
+app.include_router(post_router)
 
 app.mount("/template", StaticFiles(directory="app/template"), name="template")
 
