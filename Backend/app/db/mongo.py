@@ -80,9 +80,8 @@ class MongoRepository:
                     username=user["username"],
                     email=user.get("email"),
                     hashed_password=user.get("hashed_password", ""),
-                    provider=user.get("provider", "area"),
+                    provider=user.get("provider", "createk"),
                     disabled=user.get("disabled", False),
-                    is_superuser=user.get("is_superuser", False),
                 )
             return None
 
