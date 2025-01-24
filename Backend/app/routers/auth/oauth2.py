@@ -65,6 +65,7 @@ async def get_user_info(provider: str, token: str, client: httpx.AsyncClient) ->
         raise HTTPException(400, detail=f"Failed to fetch {provider.title()} user info")
     
     user_data = user_response.json()
+    print(user_data)
 
     email = None
     if provider == "github":
@@ -105,7 +106,14 @@ async def oauth_callback(
         async with httpx.AsyncClient() as client:
             token_data = await exchange_code(provider, code, client)
             user_data, email = await get_user_info(provider, token_data["access_token"], client)
-            full_name = user_data.get("name")
+            
+            full_name = (
+                user_data.get("name") 
+                if (provider == "github" and user_data.get("name"))
+                else user_data.get("login") if provider == "github"
+                else user_data.get("name")
+            )
+
             user = await handle_user_creation(
                 full_name=full_name,
                 email=email or user_data.get("email"),
