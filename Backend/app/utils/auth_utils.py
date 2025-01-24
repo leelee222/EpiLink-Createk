@@ -12,13 +12,13 @@ from app.credentials.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     MONGO_DB_NAME, MONGO_COLLECTION_NAME_USER
 )
-from app.db.mongo import MongoRepository
+from app.db.user_repo import UserRepository
 import bcrypt
 
 if not hasattr(bcrypt, '__about__'):
     bcrypt.__about__ = type('about', (object,), {'__version__': bcrypt.__version__})
 
-mongodb = MongoRepository(MONGO_DB_NAME, MONGO_COLLECTION_NAME_USER)
+mongodb = UserRepository("createk")
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
@@ -76,26 +76,3 @@ async def get_current_active_user(current_user: UserInDB = Depends(get_current_u
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="You are disabled. Please contact the administrator.")
     return current_user
-
-async def get_current_admin_user(current_user: UserInDB = Depends(get_current_active_user)):
-    if not current_user.is_superuser:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You do not have permission to access this resource"
-        )
-    return current_user
-
-def is_password_strong_enough(password: str) -> bool:
-    import re
-    
-    if len(password) < 8:
-        return False
-        
-    patterns = [
-        r"[A-Z]",
-        r"[a-z]",
-        r"\d",
-        r"[!@#$%^&*(),.?\":{}|<>]"
-    ]
-    
-    return all(bool(re.search(pattern, password)) for pattern in patterns)
