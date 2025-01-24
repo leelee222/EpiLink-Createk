@@ -195,7 +195,3 @@ async def handle_user_creation(
             status_code=500,
             detail="Failed to complete user registration"
         )
-
-@oauth2_router.get('/{provider}/test')
-async def test_oauth(request: Request, provider: str) -> dict:
-    return {"message": f"Testing {provider} OAuth2"}
