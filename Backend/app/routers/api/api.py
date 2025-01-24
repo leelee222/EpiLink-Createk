@@ -10,9 +10,7 @@ api_router = APIRouter(
     dependencies=[Depends(has_access)]
 )
 
-workflowdb = MongoRepository("area", "workflows")
-servicedb = MongoRepository("area", "services")
-mongodb = MongoRepository("area", "users")
+mongodb = MongoRepository("createk", "users")
 
 @api_router.get(
     "/users/me"
@@ -140,8 +138,8 @@ async def delete_user(
 
     try:
         await mongodb.delete_user(current_user.username)
-        await workflowdb.delete_all(current_user.username)
-        await servicedb.delete_all(current_user.username)
+        # await workflowdb.delete_all(current_user.username)
+        # await servicedb.delete_all(current_user.username)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
