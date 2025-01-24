@@ -134,33 +134,6 @@ class MongoRepository:
     async def get_data(self, username: str) -> Optional[dict]:
         async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
             return await collection.find_one({"username": username})
-    
-    async def get_workflow_by_id(self, workflow_id: str) -> Optional[dict]:
-        async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
-            return await collection.find_one({"_id": ObjectId(workflow_id)})
-
-    async def update_data(self, username: str, workflow_id: str, data: dict) -> bool:
-        async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
-            result = await collection.update_one(
-                {"username": username, "_id": ObjectId(workflow_id)},
-                {"$set": data}
-            )
-            return result.modified_count > 0
-
-    async def delete_workflow(self, username: str, workflow_id: str) -> bool:
-        async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
-            result = await collection.delete_one(
-                {"username": username, "_id": ObjectId(workflow_id)}
-            )
-            return result.deleted_count > 0
-
-    async def disable_workflow(self, username: str, workflow_id: str) -> bool:
-        async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
-            result = await collection.update_one(
-                {"username": username, "_id": ObjectId(workflow_id)},
-                {"$set": {"is_active": False}}
-            )
-            return result.modified_count > 0
 
     async def get_all(self) -> List[dict]:
         async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
@@ -169,6 +142,7 @@ class MongoRepository:
             for document in results:
                 document["_id"] = str(document["_id"])
             return results
+
     async def update_data_by_id(self, _id: str, data: dict) -> bool:
         async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
             result = await collection.update_one(
