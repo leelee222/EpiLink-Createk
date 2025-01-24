@@ -75,8 +75,6 @@ async def get_current_user(token: str = Depends(has_access)):
 async def get_current_active_user(current_user: UserInDB = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="You are disabled. Please contact the administrator.")
-    if current_user.hashed_password is None and current_user.provider == "area":
-        raise HTTPException(status_code=400, detail="Password is required for this user")
     return current_user
 
 async def get_current_admin_user(current_user: UserInDB = Depends(get_current_active_user)):
