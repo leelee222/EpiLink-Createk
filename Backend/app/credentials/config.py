@@ -91,3 +91,34 @@ if GMAIL_EMAIL_PASSWORD is None:
 
 OAUTH2 = "oauth2"
 GOOGLE_REDIRECT_URI = f"http://{SERVER_HOST}:{int(APP_PORT)}/api/{OAUTH2}/google/callback"
+
+OAUTH_CONFIG = {
+    "google": {
+        "auth_url": "https://accounts.google.com/o/oauth2/v2/auth",
+        "token_url": "https://oauth2.googleapis.com/token",
+        "userinfo_url": "https://openidconnect.googleapis.com/v1/userinfo",
+        "scopes": "openid email profile"
+    },
+    "github": {
+        "auth_url": "https://github.com/login/oauth/authorize",
+        "token_url": "https://github.com/login/oauth/access_token",
+        "userinfo_url": "https://api.github.com/user",
+        "emails_url": "https://api.github.com/user/emails",
+        "scopes": "user:email"
+    }
+}
+
+CLIENT_IDS = {
+    "google": GOOGLE_CLIENT_ID,
+    "github": GITHUB_CLIENT_ID
+}
+
+CLIENT_SECRETS = {
+    "google": GOOGLE_CLIENT_SECRET,
+    "github": GITHUB_CLIENT_SECRET
+}
+
+REDIRECT_URIS = {
+    "google": f"http://{SERVER_HOST}:{int(APP_PORT)}/api/{OAUTH2}/google/callback",
+    "github": f"http://{SERVER_HOST}:{int(APP_PORT)}/api/{OAUTH2}/github/callback"
+}
