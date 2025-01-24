@@ -57,7 +57,7 @@ async def custom_swagger_ui_html():
     return HTMLResponse(
         template.replace(
             "{{ title }}", 
-            "ACTION-REACTION API Documentation"
+            "CRÉATEK API Documentation"
         ).replace(
             "{{ openapi_url }}", 
             "/openapi.json"
