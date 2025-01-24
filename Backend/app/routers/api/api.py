@@ -1,149 +1,58 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
-from app.db.mongo import MongoRepository
-from app.routers.models import User
-from app.utils.auth_utils import get_current_active_user, get_password_hash, has_access
-from fastapi_cache.decorator import cache
+from fastapi import APIRouter, Depends, HTTPException, status
+from app.db.user_repo import UserRepository
+from app.routers.models import User, UserInDB
+from app.utils.auth_utils import get_current_active_user, get_password_hash
 
-api_router = APIRouter(
-    prefix="/api",
-    tags=["User Management"],
-    dependencies=[Depends(has_access)]
+user_router = APIRouter(
+    prefix="/api/users",
+    tags=["User Management"]
 )
 
-mongodb = MongoRepository("createk", "users")
+user_repo = UserRepository("createk")
 
-@api_router.get(
-    "/users/me"
-)
-@cache(expire=20)
-async def read_users_me(
-    request: Request,
-    current_user: User = Depends(get_current_active_user)
-) -> User:
-    if not current_user or not isinstance(current_user, User):
-        raise HTTPException(
-            status_code=404,
-            detail="User not found or not authenticated."
-        )
+@user_router.get("/me", response_model=User)
+async def read_users_me(current_user: UserInDB = Depends(get_current_active_user)):
     return current_user
 
-@api_router.get(
-    "/users/me/id"
-)
-@cache(expire=20)
-async def get_me_id(
-    request: Request,
-    current_user: User = Depends(get_current_active_user)
-):
-    if not current_user or not current_user.username:
-        raise HTTPException(
-            status_code=404,
-            detail="Authenticated user not found."
-        )
+@user_router.get("/me/id", response_model=str)
+async def get_me_id(current_user: UserInDB = Depends(get_current_active_user)):
+    user = await user_repo.find_one({"username": current_user.username})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user["id"]
 
-    user_id = await mongodb.get_me_id(current_user.username)
-    if not user_id:
-        raise HTTPException(
-            status_code=404,
-            detail="User ID not found."
-        )
-    return user_id
-
-@api_router.put(
-    "/users/me/email",
-    response_model=User
-)
+@user_router.put("/me/email", response_model=User)
 async def update_user_email(
-    request: Request,
     email: str,
-    current_user: User = Depends(get_current_active_user)
-) -> User:
-    if not email or "@" not in email or "." not in email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid email format."
-        )
+    current_user: UserInDB = Depends(get_current_active_user)
+):
+    if not email or "@" not in email:
+        raise HTTPException(status_code=400, detail="Invalid email format")
+    
+    if await user_repo.update_user(current_user.username, {"email": email}):
+        return User(**current_user.model_dump(), email=email)
+    
+    raise HTTPException(status_code=500, detail="Failed to update email")
 
-    if email == current_user.email:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot update email to the same value."
-        )
-
-    user_data = {"email": email, "disabled": False}
-    update_success = await mongodb.update_user(current_user.username, user_data)
-
-    if not update_success:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to update user email."
-        )
-
-    return User(username=current_user.username, email=email, disabled=False)
-
-@api_router.put(
-    "/users/me/password"
-)
+@user_router.put("/me/password", response_model=User)
 async def update_user_password(
-    request: Request,
     old_password: str,
     new_password: str,
-    current_user: User = Depends(get_current_active_user)
-) -> User:
+    current_user: UserInDB = Depends(get_current_active_user)
+):
     if get_password_hash(old_password) != current_user.hashed_password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Current password is incorrect."
-        )
-
-    if not new_password or len(new_password) < 8:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="New password must be at least 8 characters long."
-        )
-
-    if old_password == new_password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="New password must be different from current password."
-        )
-
-    user_data = {
-        "hashed_password": get_password_hash(new_password),
-        "disabled": False
-    }
+        raise HTTPException(status_code=401, detail="Incorrect current password")
     
-    update_success = await mongodb.update_user(current_user.username, user_data)
+    if len(new_password) < 8:
+        raise HTTPException(status_code=400, detail="Password too short")
+    
+    hashed_password = get_password_hash(new_password)
+    if await user_repo.update_user(current_user.username, {"hashed_password": hashed_password}):
+        return User(**current_user.dict())
+    
+    raise HTTPException(status_code=500, detail="Password update failed")
 
-    if not update_success:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to update user password."
-        )
-
-    return User(username=current_user.username, email=current_user.email, disabled=False)
-
-@api_router.delete(
-    "/users/me",
-)
-async def delete_user(
-    request: Request,
-    current_user: User = Depends(get_current_active_user)
-) -> dict:
-    if not current_user or not current_user.username:
-        raise HTTPException(
-            status_code=404,
-            detail="Authenticated user not found."
-        )
-
-    try:
-        await mongodb.delete_user(current_user.username)
-        # await workflowdb.delete_all(current_user.username)
-        # await servicedb.delete_all(current_user.username)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to delete user data: {str(e)}"
-        )
-
-    return {"message": "User deleted successfully."}
+@user_router.delete("/me", status_code=204)
+async def delete_user(current_user: UserInDB = Depends(get_current_active_user)):
+    if not await user_repo.delete_user(current_user.username):
+        raise HTTPException(status_code=500, detail="Failed to delete user")
