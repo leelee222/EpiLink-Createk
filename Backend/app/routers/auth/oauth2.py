@@ -10,8 +10,8 @@ from app.utils.auth_utils import create_access_token
 from app.db.user_repo import UserRepository
 from fastapi import BackgroundTasks
 from app.credentials.config import (
-    GMAIL_EMAIL_PASSWORD,
-    CLIENT_IDS, CLIENT_SECRETS, REDIRECT_URIS,
+    GMAIL_EMAIL_PASSWORD, CLIENT_IDS, 
+    CLIENT_SECRETS, REDIRECT_URIS,
     OAUTH_CONFIG,
     FRONTEND_HOST, FRONTEND_PORT
 )
@@ -78,7 +78,11 @@ async def get_user_info(provider: str, token: str, client: httpx.AsyncClient) ->
     
     return user_data, email
 
-@oauth2_router.get('/{provider}/login')
+@oauth2_router.get(
+    '/{provider}/login',
+    summary="OAuth2 login endpoint",
+    description="OAuth2 login endpoint"
+)
 async def oauth_login(request: Request, provider: str) -> RedirectResponse:
     if provider not in OAUTH_CONFIG:
         raise HTTPException(404, detail="Provider not supported")
@@ -95,7 +99,11 @@ async def oauth_login(request: Request, provider: str) -> RedirectResponse:
     
     return f"{OAUTH_CONFIG[provider]['auth_url']}?{urlencode(params)}"
 
-@oauth2_router.get('/{provider}/callback')
+@oauth2_router.get(
+    '/{provider}/callback',
+    summary="OAuth2 callback endpoint",
+    description="OAuth2 callback endpoint"
+)
 async def oauth_callback(
     request: Request,
     provider: str,
