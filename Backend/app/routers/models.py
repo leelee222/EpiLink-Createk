@@ -1,3 +1,4 @@
+from enum import Enum
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from typing import List, Optional
@@ -60,6 +61,43 @@ class Reply(ReplyCreate):
     likes: List[str] = []
     created_at: datetime
     updated_at: datetime
+
+
+class NotificationType(str, Enum):
+    FOLLOW = "follow"
+    LIKE = "like"
+    COMMENT = "comment"
+    REPLY = "reply"
+
+class Notification(BaseModel):
+    id: str
+    recipient_id: str
+    sender_id: str
+    type: NotificationType
+    content: str
+    post_id: Optional[str] = None
+    read: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Add new models
+
+class Message(BaseModel):
+    id: str
+    sender_id: str
+    recipient_id: str
+    content: str
+    read: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MessageCreate(BaseModel):
+    content: str
+    recipient_id: str
+
+class Conversation(BaseModel):
+    id: str
+    participants: List[str]
+    last_message: Optional[Message] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 Post.model_rebuild()
 Comment.model_rebuild()
