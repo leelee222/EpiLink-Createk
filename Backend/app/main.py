@@ -5,6 +5,11 @@ from app.db.connector import MongoConnectionManager
 from app.routers.auth.oauth2 import oauth2_router
 from app.routers.api.api import user_router
 from app.routers.post.post import post_router
+from app.routers.follow.follow import follow_router
+from app.routers.post.feed import feed_router
+from app.routers.post.notif import notification_router
+from app.routers.search.search import search_router
+from app.routers.message.message import message_router
 from app.credentials.config import REDIS_HOST, REDIS_PORT
 from fastapi import FastAPI
 from fastapi_cache import FastAPICache
@@ -48,6 +53,11 @@ app.add_middleware(
 app.include_router(oauth2_router)
 app.include_router(user_router)
 app.include_router(post_router)
+app.include_router(follow_router)
+app.include_router(feed_router)
+app.include_router(notification_router)
+app.include_router(search_router)
+app.include_router(message_router)
 
 app.mount("/template", StaticFiles(directory="app/template"), name="template")
 
