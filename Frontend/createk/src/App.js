@@ -5,7 +5,6 @@ import OverviewPosts from './components/Pages/OverviewPosts/OverviewPosts';
 function App() {
   return (
     <div className="App">
-    hello
       <BrowserRouter>
         <Routes>
           <Route exact path='/'/>
