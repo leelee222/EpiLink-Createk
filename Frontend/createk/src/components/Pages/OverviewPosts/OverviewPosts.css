@@ -1,0 +1,186 @@
+/* General Styling */
+.overview-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Left Sidebar */
+  .left-sidebar {
+    width: 20%;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .left-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .left-sidebar ul li {
+    margin-bottom: 20px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  /* Main Content */
+  .main-content {
+    width: 50%;
+    padding: 20px;
+  }
+  
+  .post-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .post-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .post-header span {
+    font-weight: bold;
+    color: #1da1f2;
+  }
+  
+  .post-body p {
+    margin-top: 10px;
+    color: #333;
+  }
+  
+  /* Right Sidebar */
+  .right-sidebar {
+    width: 20%;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .right-sidebar .follow-section,
+  .right-sidebar .search-section {
+    margin-bottom: 30px;
+  }
+  
+  .right-sidebar h3 {
+    font-size: 18px;
+  }
+  
+  .right-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .right-sidebar ul li {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .right-sidebar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+  }
+  
+
+/*.overview-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  .left-sidebar {
+    width: 20%;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+  }
+  
+  .left-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .left-sidebar ul li {
+    margin-bottom: 15px;
+    cursor: pointer;
+  }
+  
+  .main-content {
+    width: 50%;
+    padding: 10px;
+  }
+  
+  .post-box textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .post-box button {
+    padding: 10px 20px;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .posts {
+    margin-top: 20px;
+  }
+  
+  .post {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .right-sidebar {
+    width: 25%;
+    padding: 10px;
+    border-left: 1px solid #ccc;
+  }
+  
+  .search-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+  }
+  
+  .follow-suggestions {
+    margin-top: 20px;
+  }
+  
+  .suggestion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .suggestion button {
+    padding: 5px 10px;
+    background-color: #1da1f2;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  */
