@@ -1,25 +1,17 @@
 import './App.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useContext, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import OverviewPosts from './components/Pages/OverviewPosts/OverviewPosts';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    hello
+      <BrowserRouter>
+        <Routes>
+          <Route exact path='/'/>
+          <Route exact path="/overview" element={<OverviewPosts />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
