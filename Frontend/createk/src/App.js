@@ -3,12 +3,14 @@ import LoginPage from './components/Authentification/Login';
 import Success from './components/Authentification/Sucess';
 import HomePage from './components/Pages/Explore';
 import OverviewPosts from './components/Pages/OverviewPosts/OverviewPosts';
+import NotificationsPage from './components/Pages/Notifications';
+import MessagesPage from './components/Pages/Messages';
 import ProfilePage from './components/Pages/Profile';
-
+import ExplorePage from './components/Pages/Explore';
+import PostPage from './components/Pages/Posts';
 const Check = () => {
   const ProtectedRoute = ({ children }) => {
     const accessToken = localStorage.getItem('access_token');
-    console.log('Access Token:', accessToken);
     return accessToken ? (
       <>
         {children}
@@ -25,6 +27,10 @@ const Check = () => {
         <Route exact path='/' element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         <Route exact path='/overviews' element={<ProtectedRoute><OverviewPosts /></ProtectedRoute>} />
         <Route exact path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route exact path='/notifications' element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
+        <Route exact path='/messages' element={<ProtectedRoute><MessagesPage /></ProtectedRoute>} />
+        <Route exact path='/explore' element={<ProtectedRoute><ExplorePage /></ProtectedRoute>} />
+        <Route exact path='/posts/:id' element={<ProtectedRoute><PostPage /></ProtectedRoute>} />
       </Routes>
     </div>
   );
