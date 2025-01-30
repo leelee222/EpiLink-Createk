@@ -42,6 +42,14 @@ const MessagesPage = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        toast.error('Unauthorized access. Please log in again.');
+                        navigate('/login');
+                    } else {
+                        throw new Error('Failed to load messages');
+                    }
+                }
                 const data = await response.json();
                 setCurrentUserId(data.id);
             } catch (error) {

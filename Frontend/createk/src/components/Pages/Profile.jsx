@@ -357,9 +357,15 @@ const ProfilePage = () => {
                         'Authorization': `Bearer ${token}`
                     }
                 });
-                const data = await response.json();
-                setProfile(data);
-                console.log(data)
+                if (response.ok) {
+                    const data = await response.json();
+                    setProfile(data);
+                } else if (response.status === 401 || response.status === 403) {
+                    toast.error('Unauthorized access. Please log in again.');
+                    navigate('/login');
+                } else {
+                    toast.error('Failed to load profile. Please try again later.');
+                }
             } catch (error) {
                 toast.error('Error loading profile data');
             } finally {
@@ -372,10 +378,10 @@ const ProfilePage = () => {
 
     if (loading) {
         return (
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
                 height: '100vh',
                 bgcolor: '#000000'
             }}>
@@ -446,8 +452,8 @@ const ProfilePage = () => {
                     {/* Social Links */}
                     <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                         {profile.social_links?.linkedin && (
-                            <IconButton 
-                                href={profile.social_links.linkedin} 
+                            <IconButton
+                                href={profile.social_links.linkedin}
                                 target="_blank"
                                 sx={{ color: '#0A66C2' }}
                             >
@@ -455,8 +461,8 @@ const ProfilePage = () => {
                             </IconButton>
                         )}
                         {profile.social_links?.github && (
-                            <IconButton 
-                                href={profile.social_links.github} 
+                            <IconButton
+                                href={profile.social_links.github}
                                 target="_blank"
                                 sx={{ color: 'white' }}
                             >
@@ -512,7 +518,7 @@ const ProfilePage = () => {
                             Projects content here...
                         </Typography>
                     )}
-                    
+
                     {selectedTab === 1 && (
                         <Typography sx={{ color: 'white' }}>
                             Collaborations content here...

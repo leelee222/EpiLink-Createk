@@ -7,14 +7,23 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 const LeftBar = () => {
     const navigate = useNavigate();
+    const handleLogout = () => {
+        // Implement logout functionality here
+        console.log('Logout');
+        // Example: Clear local storage and navigate to login page
+        localStorage.removeItem('access_token');
+        navigate('/login');
+    };
     const menuItems = [
           { icon: <Home />, text: 'Home', path: '/' },
           { icon: <Tag />, text: 'Explore', path: '/explore' },
           { icon: <NotificationsNone />, text: 'Notifications', path: '/notifications' },
           { icon: <MailOutline />, text: 'Messages', path: '/messages' },
           { icon: <PersonOutline />, text: 'Profile', path: '/profile' },
-          { icon: <LogoutIcon />, text: 'Logout', path: '/logout' }
+          { icon: <LogoutIcon />, text: 'Logout',  function: handleLogout}
         ];
+
+    
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#000000' }}>
@@ -28,7 +37,7 @@ const LeftBar = () => {
                         <ListItem
                             key={item.text}
                             button
-                            onClick={() => navigate(item.path)}
+                            onClick={() => item.path ? navigate(item.path) : item.function && item.function()}
                             sx={{
                                 borderRadius: 8,
                                 mb: 1,

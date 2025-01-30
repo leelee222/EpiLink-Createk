@@ -40,8 +40,14 @@ const NotificationsPage = () => {
                     }
                 });
 
-                if (!response.ok) throw new Error('Failed to fetch notifications');
-                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        toast.error('Unauthorized access. Please log in again.');
+                        navigate('/login');
+                    } else {
+                        throw new Error('Failed to fetch notifications');
+                    }
+                }
                 const data = await response.json();
                 setNotifications(data);
             } catch (error) {

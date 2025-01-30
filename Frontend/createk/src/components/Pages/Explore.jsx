@@ -42,8 +42,14 @@ const ExplorePage = () => {
                     }
                 });
                 
-                if (!response.ok) throw new Error('Failed to load feed');
-                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        toast.error('Unauthorized access. Please log in again.');
+                        navigate('/login');
+                    } else {
+                        throw new Error('Failed to load feed');
+                    }
+                }
                 const data = await response.json();
                 setFeed(data);
             } catch (error) {
