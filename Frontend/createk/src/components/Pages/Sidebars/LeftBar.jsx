@@ -63,6 +63,7 @@ const LeftBar = () => {
                         textTransform: 'none',
                         py: 1.5
                     }}
+                    onClick={() => navigate('/posts')}
                 >
                     Post
                 </Button>
