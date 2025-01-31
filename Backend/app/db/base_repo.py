@@ -23,6 +23,16 @@ class BaseRepository:
                 doc["_id"] = str(doc["_id"])
             return documents
 
+    async def find_many(self, query: Dict, sort: Optional[List[tuple]] = None) -> List[Dict]:
+        async with self.connection_manager.get_collection(self.db_name, self.collection_name) as collection:
+            cursor = collection.find(query)
+            if sort:
+                cursor.sort(sort)
+            documents = await cursor.to_list(length=None)
+            for doc in documents:
+                doc["_id"] = str(doc["_id"])
+            return documents
+
     # async def find(
     #     self,
     #     query: dict,

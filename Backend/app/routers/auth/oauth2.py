@@ -160,13 +160,13 @@ async def handle_user_creation(
                 existing_user.profile_picture = profile_picture
             return existing_user
 
-        if email:
-            email_user = await user_repo.get_user_by_email(email)
-            if email_user and email_user.provider != provider:
-                raise HTTPException(
-                    status_code=409,
-                    detail=f"Email already registered with {email_user.provider}"
-                )
+        # if email:
+        #     email_user = await user_repo.get_user_by_email(email)
+        #     if email_user and email_user.provider != provider:
+        #         raise HTTPException(
+        #             status_code=409,
+        #             detail=f"Email already registered with {email_user.provider}"
+        #         )
 
         user_data = {
             "full_name": full_name,
