@@ -61,3 +61,4 @@ async def delete_user(current_user: UserInDB = Depends(get_current_active_user))
 async def get_all_users():
     users = await user_repo.find({})
     return users
+

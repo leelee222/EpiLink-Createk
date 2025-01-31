@@ -11,6 +11,11 @@ from app.utils.auth_utils import get_current_active_user, has_access
 post_router = APIRouter(prefix="/posts", tags=["Posts"], dependencies=[Depends(has_access)])
 post_repo = PostRepository("createk")
 
+@post_router.get("/all", response_model=list[Post])
+async def get_all_posts():
+    posts = await post_repo.find({})
+    return [{"id": str(post["_id"]), **post} for post in posts]
+
 @post_router.get("/{post_id}", response_model=Post)
 async def get_post(post_id: str):
     post = await post_repo.find_one({"_id": ObjectId(post_id)})
@@ -56,3 +61,8 @@ async def create_post(post: PostCreate, current_user: User = Depends(get_current
     })
     post_id = await post_repo.insert_one(post_data)
     return {**post_data, "id": post_id}
+
+# @post_router.get("/all", response_model=list[Post])
+# async def get_all_posts():
+#     posts = await post_repo.find({})
+#     return [{"id": str(post["_id"]), **post} for post in posts]
