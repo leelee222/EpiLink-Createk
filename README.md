@@ -238,15 +238,3 @@ Frontend environment variables are stored in `Frontend/createk/.env`. Key variab
 ## Deployment
 
 To deploy the application, you can use Docker or any cloud provider that supports Python and Node.js applications. Ensure you set the appropriate environment variables for your deployment environment.
-
----
-
-For more detailed information, refer to the individual README files in the 
-
-Backend
-
- and 
-
-Frontend
-
- directories.
