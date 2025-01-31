@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, List, ListItem, ListItemIcon, ListItemText, Typography, Avatar, Button } from "@mui/material";
 import { Home, Tag, NotificationsNone, MailOutline, PersonOutline, MoreHoriz } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import MakePosts from '../MakePosts';
 
 const LeftBar = () => {
     const navigate = useNavigate();
+    const [openPostModal, setOpenPostModal] = useState(false);
+
     const handleLogout = () => {
         // Implement logout functionality here
         console.log('Logout');
@@ -14,16 +16,15 @@ const LeftBar = () => {
         localStorage.removeItem('access_token');
         navigate('/login');
     };
-    const menuItems = [
-          { icon: <Home />, text: 'Home', path: '/' },
-          { icon: <Tag />, text: 'Explore', path: '/explore' },
-          { icon: <NotificationsNone />, text: 'Notifications', path: '/notifications' },
-          { icon: <MailOutline />, text: 'Messages', path: '/messages' },
-          { icon: <PersonOutline />, text: 'Profile', path: '/profile' },
-          { icon: <LogoutIcon />, text: 'Logout',  function: handleLogout}
-        ];
 
-    
+    const menuItems = [
+        { icon: <Home />, text: 'Home', path: '/' },
+        { icon: <Tag />, text: 'Explore', path: '/explore' },
+        { icon: <NotificationsNone />, text: 'Notifications', path: '/notifications' },
+        { icon: <MailOutline />, text: 'Messages', path: '/messages' },
+        { icon: <PersonOutline />, text: 'Profile', path: '/profile' },
+        { icon: <LogoutIcon />, text: 'Logout', function: handleLogout }
+    ];
 
     return (
         <Box sx={{ display: 'flex', height: '100vh', bgcolor: '#000000' }}>
@@ -68,17 +69,15 @@ const LeftBar = () => {
                     sx={{
                         mt: 2,
                         borderRadius: 8,
-                        bgcolor: '#1D9BF0',
-                        textTransform: 'none',
-                        py: 1.5
                     }}
-                    onClick={() => navigate('/posts')}
+                    onClick={() => setOpenPostModal(true)}
                 >
-                    Post
+                    Make a Post
                 </Button>
+                <MakePosts open={openPostModal} onClose={() => setOpenPostModal(false)} />
             </Box>
         </Box>
     );
-}
+};
 
 export default LeftBar;

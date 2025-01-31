@@ -51,6 +51,7 @@ const ExplorePage = () => {
                     }
                 }
                 const data = await response.json();
+                console.log(data); 
                 setFeed(data);
             } catch (error) {
                 toast.error(error.message);
