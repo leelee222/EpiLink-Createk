@@ -33,7 +33,12 @@ app = FastAPI(
     title="EPILINK API Documentation",
     summary="EPILINK API Documentation",
     description="""
-
+    Ce projet a pour objectif de créer une plateforme en ligne où les étudiants peuvent
+    partager leurs idées de création d’entreprise et convaincre d’autres étudiants de
+    les rejoindre pour collaborer sur ces projets. Il s’agit d’un réseau social centré s
+    l’entrepreneuriat étudiant, permettant aux utilisateurs de créer des profils, publie
+    des idées de projets, interagir via des commentaires, et se connecter entre eux
+    pour former des équipes.
     """,
     license_info={
         "name": "MIT License",
