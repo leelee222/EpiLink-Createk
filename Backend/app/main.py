@@ -30,9 +30,10 @@ async def shutdown_logic(app: FastAPI):
     print("Shutting down background tasks.")
 
 app = FastAPI(
-    title="CRÉATEK API Documentation",
-    summary="CRÉATEK API Documentation",
+    title="EPILINK API Documentation",
+    summary="EPILINK API Documentation",
     description="""
+
     """,
     license_info={
         "name": "MIT License",
@@ -69,7 +70,7 @@ async def custom_swagger_ui_html():
     return HTMLResponse(
         template.replace(
             "{{ title }}", 
-            "CRÉATEK API Documentation"
+            "EPILINK API Documentation"
         ).replace(
             "{{ openapi_url }}", 
             "/openapi.json"
