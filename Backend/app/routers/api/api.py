@@ -56,9 +56,8 @@ async def update_user_password(
 async def delete_user(current_user: UserInDB = Depends(get_current_active_user)):
     if not await user_repo.delete_user(current_user.full_name):
         raise HTTPException(status_code=500, detail="Failed to delete user")
-    
+
 @user_router.get('/all-users', response_model=list[User])
 async def get_all_users():
-    users = await user_repo.find({})
+    users = await user_repo.get_all_users()
     return users
-

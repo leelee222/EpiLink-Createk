@@ -61,8 +61,3 @@ async def create_post(post: PostCreate, current_user: User = Depends(get_current
     })
     post_id = await post_repo.insert_one(post_data)
     return {**post_data, "id": post_id}
-
-# @post_router.get("/all", response_model=list[Post])
-# async def get_all_posts():
-#     posts = await post_repo.find({})
-#     return [{"id": str(post["_id"]), **post} for post in posts]

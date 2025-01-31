@@ -15,7 +15,7 @@ notification_repo = NotificationRepository("createk")
 @notification_router.get("/", response_model=List[Notification])
 async def get_notifications(current_user: User = Depends(get_current_active_user)):
     notifications = await notification_repo.find_many(
-        {"recipient_id": current_user.id},
+        {"author_id": current_user.full_name},
         sort=[("created_at", -1)]
     )
     return notifications
@@ -26,7 +26,7 @@ async def mark_notification_read(
     current_user: User = Depends(get_current_active_user)
 ):
     updated = await notification_repo.update_one(
-        {"_id": ObjectId(notification_id), "recipient_id": current_user.id},
+        {"_id": ObjectId(notification_id), "author_id": current_user.full_name},
         {"$set": {"read": True}}
     )
     if not updated:

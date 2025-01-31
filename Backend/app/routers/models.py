@@ -11,6 +11,7 @@ class TokenData(BaseModel):
     full_name: Optional[str | None] = None
 
 class User(BaseModel):
+    id: str = Field(alias="_id")
     full_name: str = Field(..., example="johndoe")
     email: Optional[EmailStr] = Field(None, example="johndoe@gmail.com")
     disabled: Optional[bool] = False
