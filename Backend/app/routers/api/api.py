@@ -48,7 +48,7 @@ async def get_me_id(current_user: UserInDB = Depends(get_current_active_user)):
     user = await user_repo.find_one({"full_name": current_user.full_name})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return user["id"]
+    return user["_id"]
 
 @user_router.put(
     "/me/email",
