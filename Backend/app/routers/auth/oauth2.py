@@ -65,7 +65,6 @@ async def get_user_info(provider: str, token: str, client: httpx.AsyncClient) ->
         raise HTTPException(400, detail=f"Failed to fetch {provider.title()} user info")
     
     user_data = user_response.json()
-    print(user_data)
 
     email = None
     if provider == "github":
