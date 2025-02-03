@@ -1,3 +1,4 @@
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.db.user_repo import UserRepository
 from app.routers.models import User, UserInDB
@@ -162,3 +163,37 @@ Retrieves a list of all users in the system.
 async def get_all_users():
     users = await user_repo.get_all_users()
     return users
+
+@user_router.get(
+    "/get/{_id}",
+    response_model=dict,
+    summary="Get User Profile and Posts",
+    description="""
+Retrieves complete user profile information and all associated posts.
+
+### Description:
+- Fetches user details and all posts created by the user
+- Returns comprehensive profile data including user info and post history
+
+### Parameters:
+- **_id**: User's unique identifier
+
+### Responses:
+- **200 OK**: Returns user profile and posts
+- **404 Not Found**: If user is not found
+"""
+)
+async def get_user_by_id(_id: str):
+    user = await user_repo.find_one({"_id": ObjectId(_id)})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user_data = UserInDB(**user).model_dump()
+    del user_data["hashed_password"]
+
+    posts = await user_repo.get_user_posts(ObjectId(_id))
+    
+    return {
+        "user_profile": user_data,
+        "posts": posts
+    }
